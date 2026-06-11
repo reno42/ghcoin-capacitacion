@@ -312,6 +312,82 @@ body::after {
   font-weight: 500;
 }
 
+/* ── Calculator ── */
+.calc-wrapper {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 40px;
+  max-width: 800px; margin: 48px auto 0;
+}
+.calc-row {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1.2fr;
+  gap: 12px; margin-bottom: 12px; align-items: end;
+}
+.calc-row.header {
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text-dim);
+  padding-bottom: 10px; border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+.calc-row.header span { padding: 0 4px; }
+.calc-row input, .calc-row select {
+  width: 100%; padding: 12px 14px;
+  background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); color: var(--text);
+  font-family: 'Inter', sans-serif; font-size: 0.9rem;
+  transition: var(--transition);
+}
+.calc-row input:focus {
+  outline: none; border-color: var(--gold);
+  background: rgba(212,168,83,0.05);
+}
+.calc-row input::placeholder { color: var(--text-dim); }
+.calc-actions {
+  display: flex; gap: 12px; justify-content: flex-end;
+  margin-top: 20px; padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.calc-btn-add {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: transparent; border: 1px dashed var(--border);
+  color: var(--text-muted); padding: 10px 20px; border-radius: 100px;
+  font-size: 0.85rem; font-weight: 600; cursor: pointer;
+  transition: var(--transition); font-family: 'Inter', sans-serif;
+}
+.calc-btn-add:hover { border-color: var(--gold); color: var(--gold); }
+.calc-totals {
+  margin-top: 28px; padding-top: 24px;
+  border-top: 2px solid var(--border-gold);
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  text-align: center;
+}
+.calc-total-num {
+  font-size: 2rem; font-weight: 900; color: var(--gold);
+  font-feature-settings: "tnum"; font-variant-numeric: tabular-nums;
+}
+.calc-total-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
+.calc-note {
+  text-align: center; margin-top: 16px;
+  font-size: 0.78rem; color: var(--text-dim);
+}
+.calc-remove {
+  background: none; border: none; color: var(--text-dim);
+  cursor: pointer; padding: 12px 4px; font-size: 0.9rem;
+  transition: var(--transition);
+}
+.calc-remove:hover { color: var(--red); }
+.calc-result-mini {
+  text-align: right; font-weight: 600; font-size: 0.82rem;
+  color: var(--gold-light); padding: 12px 4px;
+}
+
+@media (max-width: 768px) {
+  .calc-wrapper { padding: 24px 16px; }
+  .calc-row { grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .calc-row.header { display: none; }
+  .calc-totals { grid-template-columns: 1fr; }
+  .calc-result-mini { text-align: left; }
+}
+
 /* ── Section: Out of Scope ── */
 .out-grid {
   display: grid;
@@ -400,6 +476,7 @@ body::after {
       <div class="nav-logo-icon">GH</div>
       <span>GHCoin × Futuraria</span>
     </a>
+    <a href="#calculadora" style="color:var(--text-muted);font-size:0.82rem;text-decoration:none;font-weight:500;">Calculadora</a>
     <a href="#cta" class="nav-cta">Hablar con Futuraria</a>
   </div>
 </nav>
@@ -646,6 +723,54 @@ body::after {
   </div>
 </section>
 
+<!-- ──── Section: Calculadora de Ahorro ──── -->
+<section class="section" id="calculadora" style="background: rgba(17,24,39,0.5);">
+  <div class="container">
+    <div class="section-label">Calculadora</div>
+    <h2 class="section-title">¿Cuánto puede ahorrar tu área?</h2>
+    <p class="section-subtitle">
+      Ingresá los procesos repetitivos de tu equipo. La calculadora estima el ahorro anual al automatizarlos con n8n + Supabase.
+    </p>
+    <div class="calc-wrapper fade-in">
+      <div class="calc-row header">
+        <span>Proceso</span>
+        <span>Minutos por vez</span>
+        <span>Veces al mes</span>
+        <span>Costo hora (S/)</span>
+      </div>
+      <div id="calc-rows">
+        <div class="calc-row" data-row="1">
+          <input type="text" placeholder="Ej: Facturación manual" class="calc-name">
+          <input type="number" placeholder="30" min="1" class="calc-minutes">
+          <input type="number" placeholder="20" min="1" class="calc-frequency">
+          <div style="display:flex;align-items:center;gap:4px;">
+            <input type="number" placeholder="25" min="1" class="calc-rate" style="flex:1;">
+            <button class="calc-remove" onclick="this.closest('.calc-row').remove();calcAll();" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+          </div>
+        </div>
+      </div>
+      <div class="calc-actions">
+        <button class="calc-btn-add" onclick="addRow()"><i class="fa-solid fa-plus"></i> Agregar proceso</button>
+      </div>
+      <div class="calc-totals">
+        <div>
+          <div class="calc-total-num" id="total-mensual">S/ 0</div>
+          <div class="calc-total-label">Costo mensual actual</div>
+        </div>
+        <div>
+          <div class="calc-total-num" id="total-anual">S/ 0</div>
+          <div class="calc-total-label">Costo anual actual</div>
+        </div>
+        <div>
+          <div class="calc-total-num" id="total-ahorro" style="color: #10b981;">S/ 0</div>
+          <div class="calc-total-label">Ahorro anual estimado</div>
+        </div>
+      </div>
+      <p class="calc-note">* Ahorro calculado con una reducción conservadora del <strong>70%</strong> del tiempo del proceso al automatizarlo.</p>
+    </div>
+  </div>
+</section>
+
 <!-- ──── Section 5: Lo que NO hacemos ──── -->
 <section class="section" id="no-hacemos">
   <div class="container">
@@ -703,6 +828,51 @@ body::after {
     <p>GHCoin S.A.C. × <span>Futuraria</span> — Capacitación en Automatización con IA · 2026</p>
   </div>
 </footer>
+
+<!-- ──── Calculator JS ──── -->
+<script>
+const RATE = 0.70;
+let rowCount = 1;
+
+function calcAll() {
+  let total = 0;
+  document.querySelectorAll('#calc-rows .calc-row').forEach(row => {
+    const mins = parseFloat(row.querySelector('.calc-minutes')?.value) || 0;
+    const freq = parseFloat(row.querySelector('.calc-frequency')?.value) || 0;
+    const rate = parseFloat(row.querySelector('.calc-rate')?.value) || 0;
+    total += (mins / 60) * freq * rate;
+  });
+  const anual = total * 12;
+  const ahorro = anual * RATE;
+  const fmt = n => 'S/ ' + Math.round(n).toLocaleString('es-PE');
+  document.getElementById('total-mensual').textContent = fmt(total);
+  document.getElementById('total-anual').textContent = fmt(anual);
+  document.getElementById('total-ahorro').textContent = fmt(ahorro);
+}
+
+function addRow() {
+  rowCount++;
+  const div = document.createElement('div');
+  div.className = 'calc-row';
+  div.setAttribute('data-row', rowCount);
+  div.innerHTML = `
+    <input type="text" placeholder="Ej: Reporte semanal" class="calc-name">
+    <input type="number" placeholder="30" min="1" class="calc-minutes">
+    <input type="number" placeholder="10" min="1" class="calc-frequency">
+    <div style="display:flex;align-items:center;gap:4px;">
+      <input type="number" placeholder="25" min="1" class="calc-rate" style="flex:1;">
+      <button class="calc-remove" onclick="this.closest('.calc-row').remove();calcAll();" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+    </div>
+  `;
+  document.getElementById('calc-rows').appendChild(div);
+  div.querySelectorAll('input').forEach(inp => inp.addEventListener('input', calcAll));
+  calcAll();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('#calc-rows input').forEach(inp => inp.addEventListener('input', calcAll));
+});
+</script>
 
 <!-- ──── Scroll Animation ──── -->
 <script>
