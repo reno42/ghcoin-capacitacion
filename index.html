@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Capacitación en automatización con IA para GHCoin S.A.C. — n8n + Supabase sin código, por áreas.">
+<title>GHCoin × Futuraria — Automatización con IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root {
+  --bg: #0b0f17;
+  --bg-card: #111827;
+  --bg-card-hover: #161e2e;
+  --gold: #d4a853;
+  --gold-light: #e8c97a;
+  --gold-dark: #b8922e;
+  --text: #e2e8f0;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --border: #1e293b;
+  --border-gold: rgba(212,168,83,0.25);
+  --red: #ef4444;
+  --red-bg: rgba(239,68,68,0.08);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --max-width: 1200px;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Utilities ── */
+.container { max-width: var(--max-width); margin: 0 auto; padding: 0 24px; }
+.section { padding: 100px 0; }
+.section-label {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 0.8rem; font-weight: 600; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 16px;
+}
+.section-label::before {
+  content: ''; width: 32px; height: 1.5px;
+  background: var(--gold); border-radius: 1px;
+}
+.section-title {
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-weight: 800; line-height: 1.15; letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+.section-subtitle {
+  font-size: 1.1rem; color: var(--text-muted); max-width: 640px;
+  line-height: 1.7;
+}
+
+/* ── Background texture ── */
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: -1;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(212,168,83,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 50% at 80% 40%, rgba(212,168,83,0.03) 0%, transparent 50%),
+    radial-gradient(ellipse 30% 40% at 20% 70%, rgba(212,168,83,0.02) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* ── Grid pattern overlay ── */
+body::after {
+  content: ''; position: fixed; inset: 0; z-index: -1; opacity: 0.015;
+  background-image:
+    linear-gradient(rgba(212,168,83,0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212,168,83,0.3) 1px, transparent 1px);
+  background-size: 60px 60px; pointer-events: none;
+}
+
+/* ── Nav ── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 16px 0;
+  background: rgba(11,15,23,0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  transition: var(--transition);
+}
+.nav .container {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 700; font-size: 1.1rem; color: var(--text);
+  text-decoration: none;
+}
+.nav-logo-icon {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 0.8rem; color: var(--bg);
+}
+.nav-cta {
+  background: var(--gold); color: #0f172a;
+  padding: 10px 20px; border-radius: 100px;
+  font-weight: 600; font-size: 0.85rem; text-decoration: none;
+  transition: var(--transition);
+}
+.nav-cta:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+/* ── Hero ── */
+.hero {
+  min-height: 100vh; display: flex; align-items: center;
+  padding-top: 80px; position: relative;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(212,168,83,0.1); border: 1px solid var(--border-gold);
+  padding: 8px 16px; border-radius: 100px;
+  font-size: 0.8rem; font-weight: 500; color: var(--gold-light);
+  margin-bottom: 32px;
+}
+.hero-badge i { font-size: 0.7rem; }
+.hero-title {
+  font-size: clamp(2.25rem, 6vw, 4.25rem);
+  font-weight: 900; line-height: 1.08; letter-spacing: -0.03em;
+  margin-bottom: 24px; position: relative;
+}
+.hero-title .gold { color: var(--gold); }
+.hero-title .highlight {
+  background: linear-gradient(180deg, transparent 60%, rgba(212,168,83,0.2) 60%);
+  padding: 0 4px;
+}
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: var(--text-muted); max-width: 560px;
+  margin-bottom: 40px; line-height: 1.7;
+}
+.hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--gold); color: #0f172a;
+  padding: 16px 32px; border-radius: 100px;
+  font-weight: 700; font-size: 1rem; text-decoration: none;
+  transition: var(--transition); border: none; cursor: pointer;
+}
+.btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(212,168,83,0.25); }
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: transparent; color: var(--text);
+  padding: 16px 32px; border-radius: 100px;
+  font-weight: 600; font-size: 1rem; text-decoration: none;
+  border: 1px solid var(--border); transition: var(--transition);
+}
+.btn-secondary:hover { border-color: var(--text-muted); background: rgba(255,255,255,0.03); }
+
+.hero-stats {
+  display: flex; gap: 40px; margin-top: 64px; padding-top: 40px;
+  border-top: 1px solid var(--border);
+}
+.hero-stat-num {
+  font-size: 2rem; font-weight: 800; color: var(--gold);
+  line-height: 1.2;
+}
+.hero-stat-label { font-size: 0.85rem; color: var(--text-muted); }
+
+/* ── Section: Why ── */
+.why-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px; margin-top: 48px;
+}
+.why-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 32px;
+  transition: var(--transition);
+}
+.why-card:hover {
+  border-color: var(--border-gold);
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+}
+.why-card-icon {
+  width: 48px; height: 48px;
+  background: rgba(212,168,83,0.1); border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gold); font-size: 1.2rem; margin-bottom: 20px;
+}
+.why-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+.why-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.65; }
+
+/* ── Section: Training Axes (Cards) ── */
+.axes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 24px; margin-top: 48px;
+}
+.axis-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 36px;
+  transition: var(--transition); position: relative; overflow: hidden;
+}
+.axis-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--gold-dark), var(--gold), transparent);
+  opacity: 0; transition: var(--transition);
+}
+.axis-card:hover::before { opacity: 1; }
+.axis-card:hover {
+  border-color: var(--border-gold);
+  background: var(--bg-card-hover);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.3);
+}
+.axis-card-header {
+  display: flex; align-items: flex-start; gap: 16px; margin-bottom: 20px;
+}
+.axis-icon {
+  width: 52px; height: 52px; flex-shrink: 0;
+  background: linear-gradient(135deg, rgba(212,168,83,0.15), rgba(212,168,83,0.05));
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gold); font-size: 1.3rem;
+}
+.axis-name {
+  font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;
+}
+.axis-who {
+  font-size: 0.8rem; color: var(--text-dim); font-weight: 500;
+}
+.axis-details { display: flex; flex-direction: column; gap: 12px; }
+.axis-detail {
+  display: flex; gap: 12px; align-items: baseline;
+  font-size: 0.88rem; color: var(--text-muted);
+}
+.axis-detail i { color: var(--gold); font-size: 0.7rem; margin-top: 6px; flex-shrink: 0; }
+.axis-tools {
+  margin-top: 20px; padding-top: 16px;
+  border-top: 1px solid var(--border);
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+.axis-tool-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px; border-radius: 100px;
+  font-size: 0.75rem; font-weight: 600;
+  background: rgba(212,168,83,0.08); color: var(--gold-light);
+  border: 1px solid var(--border-gold);
+}
+
+/* ── Section: Metodología ── */
+.methodology-timeline {
+  display: flex; gap: 0; margin-top: 56px;
+  position: relative; flex-wrap: wrap;
+}
+.methodology-timeline::before {
+  content: ''; position: absolute; top: 76px; left: 76px; right: 76px;
+  height: 2px; background: linear-gradient(90deg, var(--border), var(--gold), var(--border));
+  z-index: 0;
+}
+.method-step {
+  flex: 1; min-width: 280px; text-align: center;
+  position: relative; z-index: 1; padding: 0 24px 40px;
+}
+.method-step-num {
+  width: 56px; height: 56px; margin: 0 auto 20px;
+  background: var(--bg-card); border: 2px solid var(--border);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; font-weight: 800; color: var(--gold);
+  position: relative; z-index: 1; transition: var(--transition);
+}
+.method-step:hover .method-step-num {
+  border-color: var(--gold); background: rgba(212,168,83,0.1);
+  box-shadow: 0 0 32px rgba(212,168,83,0.15);
+}
+.method-step h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+.method-step p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; }
+.method-duration {
+  display: inline-block; margin-top: 12px;
+  font-size: 0.75rem; font-weight: 600; color: var(--gold);
+  background: rgba(212,168,83,0.08); padding: 4px 12px;
+  border-radius: 100px;
+}
+
+/* ── Section: Results ── */
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px; margin-top: 48px;
+}
+.result-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 36px 32px;
+  text-align: center; transition: var(--transition);
+}
+.result-card:hover { border-color: var(--border-gold); }
+.result-value {
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 900; color: var(--gold);
+  line-height: 1; margin-bottom: 8px;
+  font-feature-settings: "tnum"; font-variant-numeric: tabular-nums;
+}
+.result-label {
+  font-size: 0.9rem; color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* ── Section: Out of Scope ── */
+.out-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px; margin-top: 40px;
+}
+.out-card {
+  background: var(--red-bg); border: 1px solid rgba(239,68,68,0.12);
+  border-radius: var(--radius); padding: 24px 28px;
+  display: flex; align-items: flex-start; gap: 16px;
+  transition: var(--transition);
+}
+.out-card:hover { border-color: rgba(239,68,68,0.25); }
+.out-icon {
+  width: 40px; height: 40px; flex-shrink: 0;
+  background: rgba(239,68,68,0.1); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--red); font-size: 1rem;
+}
+.out-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
+.out-card p { font-size: 0.82rem; color: var(--text-dim); line-height: 1.5; }
+
+/* ── Footer CTA ── */
+.footer-cta {
+  text-align: center; padding: 100px 0 80px;
+  position: relative;
+}
+.footer-cta::before {
+  content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.footer-cta h2 {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 800; line-height: 1.2; margin-bottom: 16px;
+  letter-spacing: -0.02em;
+}
+.footer-cta p { font-size: 1rem; color: var(--text-muted); margin-bottom: 36px; }
+.footer-cta .btn-primary { font-size: 1.05rem; padding: 18px 40px; }
+
+.footer-bottom {
+  border-top: 1px solid var(--border); padding: 32px 0;
+  text-align: center; font-size: 0.82rem; color: var(--text-dim);
+}
+.footer-bottom span { color: var(--gold); }
+
+/* ── Animations ── */
+.fade-in {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .section { padding: 64px 0; }
+  .hero { min-height: auto; padding: 120px 0 64px; }
+  .hero-stats { flex-wrap: wrap; gap: 24px; }
+  .hero-stat-num { font-size: 1.5rem; }
+  .axes-grid { grid-template-columns: 1fr; }
+  .methodology-timeline::before { display: none; }
+  .method-step { padding-bottom: 32px; }
+  .method-step-num { margin-bottom: 12px; }
+  .results-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero-actions { flex-direction: column; }
+  .btn-primary, .btn-secondary { justify-content: center; }
+}
+
+@media (max-width: 480px) {
+  .container { padding: 0 16px; }
+  .results-grid { grid-template-columns: 1fr; }
+  .nav-logo span { display: none; }
+  .out-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Selection ── */
+::selection { background: rgba(212,168,83,0.3); color: #fff; }
+</style>
+</head>
+<body>
+
+<!-- ──── Nav ──── -->
+<nav class="nav">
+  <div class="container">
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-icon">GH</div>
+      <span>GHCoin × Futuraria</span>
+    </a>
+    <a href="#cta" class="nav-cta">Hablar con Futuraria</a>
+  </div>
+</nav>
+
+<!-- ──── Hero ──── -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge"><i class="fa-solid fa-bolt"></i> Capacitación práctica · n8n + Supabase</div>
+    <h1 class="hero-title">
+      Automatización con IA<br>
+      para tu equipo.<br>
+      <span class="gold">Sin código.</span><br>
+      <span class="highlight">Sin depender de TI.</span>
+    </h1>
+    <p class="hero-sub">
+      Capacitación práctica para las áreas clave de GHCoin. Empoderamos a tu gente con herramientas no-code/low-code que eliminan procesos manuales y liberan horas de trabajo repetitivo.
+    </p>
+    <div class="hero-actions">
+      <a href="#cta" class="btn-primary"><i class="fa-solid fa-rocket"></i> Quiero automatizar mi área</a>
+      <a href="#ejes" class="btn-secondary"><i class="fa-solid fa-arrow-down"></i> Ver frentes de capacitación</a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="hero-stat-num">600+</div><div class="hero-stat-label">Empleados en GHCoin</div></div>
+      <div><div class="hero-stat-num">3</div><div class="hero-stat-label">Divisiones operativas</div></div>
+      <div><div class="hero-stat-num">5</div><div class="hero-stat-label">Frentes de capacitación</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ──── Section 1: ¿Por qué GHCoin? ──── -->
+<section class="section" id="por-que">
+  <div class="container">
+    <div class="section-label">El Contexto</div>
+    <h2 class="section-title">¿Por qué GHCoin necesita automatización?</h2>
+    <p class="section-subtitle">
+      Con 600 empleados y presencia en tres divisiones, los procesos administrativos aún dependen de métodos tradicionales que frenan la velocidad del negocio.
+    </p>
+    <div class="why-grid fade-in">
+      <div class="why-card">
+        <div class="why-card-icon"><i class="fa-solid fa-file-excel"></i></div>
+        <h3>Datos atrapados en Excel</h3>
+        <p>Reportes que se arman manualmente cada semana. Información dispersa en hojas de cálculo individuales, sin una sola fuente de verdad.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-card-icon"><i class="fa-solid fa-envelope"></i></div>
+        <h3>Aprobaciones por email</h3>
+        <p>Cotizaciones, vacaciones, compras — todo pasa por cadenas de correo interminables. Sin trazabilidad ni SLA claros.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-card-icon"><i class="fa-solid fa-clock"></i></div>
+        <h3>Reportes que tardan días</h3>
+        <p>Consolidar información de campo toma días. Cuando el reporte llega a gerencia, la data ya tiene una semana de desfase.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-card-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+        <h3>Dependencia total de TI</h3>
+        <p>Cada automatización requiere un desarrollador. Los equipos no pueden resolver sus propios cuellos de botella sin esperar a sistemas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ──── Section 2: Ejes de Capacitación ──── -->
+<section class="section" id="ejes" style="background: rgba(17,24,39,0.5);">
+  <div class="container">
+    <div class="section-label">Capacitación por Áreas</div>
+    <h2 class="section-title">Frentes de capacitación</h2>
+    <p class="section-subtitle">
+      No todos necesitan IA. Capacitamos solo a las áreas donde la automatización genera ROI inmediato. Cada frente es independiente y se adapta al nivel del equipo.
+    </p>
+    <div class="axes-grid fade-in">
+
+      <!-- Admin & Finanzas -->
+      <div class="axis-card">
+        <div class="axis-card-header">
+          <div class="axis-icon"><i class="fa-solid fa-calculator"></i></div>
+          <div>
+            <div class="axis-name">Admin &amp; Finanzas</div>
+            <div class="axis-who">Contabilidad · Tesorería · Facturación</div>
+          </div>
+        </div>
+        <div class="axis-details">
+          <div class="axis-detail"><i class="fa-solid fa-check"></i> <span>Reportes financieros automatizados desde Sheets a dashboard</span></div>
+          <div class="axis-detail"><i class="fa-solid fa-check"></i> <span>Conciliación bancaria con notificaciones automáticas</span></div>
+          <div class="axis-detail"><i class="fa-solid fa-check"></i> <span>Flujos de aprobación de facturas con recordatorios</span></div>
+          <div class="axis-detail"><i class="fa-solid fa-check"></i> <span>Emisión de facturas desde plantillas conectadas a Supabase</span></div>
+        </div>
+        <div class="axis-tools">
+          <span class="axis-tool-tag"><i class="fa-solid fa-diagram-project"></i> n8n</span>
+          <span class="axis-tool-tag"><i class="fa-solid fa-database"></i> Supabase</span>
+          <span class="axis-tool-tag"><i class="fa-solid fa-table"></i> Google Sheets</span>
+        </div>
+      </div>
+
+      <!-- Gerencia & Managers -->
+      <div class="axis-card">
+        <div class="axis-card-header">
+          <div class="axis-icon"><i class="fa-solid fa-chart-line"></i></div>
+          <div>
+            <div class="axis-name">Gerencia &amp; Managers</div>
+            <div class="axis-who">Gerentes · Jefes de Área · Supervisores</div>
+          </div>
+        </div>
+        <div class="axis-details">
+          <div class="axis-detail"><i class="fa-solid fa-check"></i> <span>Dashboards automáticos con KPIs en tiempo real</span></div>
+          <div class="axis-detail"><i class="fa-solid fa-check"></i> <span>Alertas inteligentes: desvíos, vencimientos, hitos</span></div>
+          <div class="axis-detail"><i class="fa-solid fa-check"></i> <span>IA para decisiones: análisis de datos sin saber programar</span></div>
+          <div class="axis-detail"><i class="fa-solid fa-check"></i> <span>Reportes gerenciales que se generan solos cada lunes</span></div>
+        </div>
+        <div class="axis-tools">
+          <span class="axis-tool-tag"><i class="fa-solid fa-diagram-project"></i> n8n</span>
+          <span class="axis-tool-tag"><i class="fa-solid fa-database"></i> Supabase</span>
+          <span class="axis-tool-tag"><i class="fa-solid fa-brain"></i> OpenAI API</span>
+        </div>
+      </div>
+
+      <!-- RRHH -->
+      <div class="axis-card">
+        <div class="axis-card-header">
+          <div class="axis-icon"><i class="fa-solid fa-users"></i></div>
+          <div>
+            <div class="axis-name">Recursos Humanos</div>
+            <div class="axis-who">RRHH · Planillas · Gestión de Personal</div>
+          </div>
+        </div>
+        <div class="axis-details">
+          <div class="axis-detail"><i class="fa-solid fa-check"></i> <span>Onboarding digital: bienvenida, documentos, checklist automático</span></div>
+          <div class="axis-detail"><i class="fa-solid fa-check"></i> <span>Control de asistencia integrado con notificaciones</span></div>
+          <div class="axis-detail"><i class="fa-solid fa-check"></i> <span>Alertas de certificaciones y exámenes médicos vencidos</span></div>
+          <div class="axis-detail"><i class="fa-solid fa-check"></i> <span>Automatización de planillas y envío de boletas</span></div>
+        </div>
+        <div class="axis-tools">
+          <span class="axis-tool-tag"><i class="fa-solid fa-diagram-project"></i> n8n</span>
+          <span class="axis-tool-tag"><i class="fa-solid fa-database"></i> Supabase</span>
+          <span class="axis-tool-tag"><i class="fa-solid fa-calendar-check"></i> Google Calendar</span>
+        </div>
+      </div>
+
+      <!-- Comercial & Cotizaciones -->
+      <div class="axis-card">
+        <div class="axis-card-header">
+          <div class="axis-icon"><i class="fa-solid fa-handshake"></i></div>
+          <div>
+            <div class="axis-name">Comercial &amp; Cotizaciones</div>
+            <div class="axis-who">Ventas · Licitaciones · Propuestas</div>
+          </div>
+        </div>
+        <div class="axis-details">
+          <div class="axis-detail"><i class="fa-solid fa-check"></i> <span>Generación de cotizaciones desde plantillas en un clic</span></div>
+          <div class="axis-detail"><i class="fa-solid fa-check"></i> <span>Seguimiento automático de propuestas enviadas</span></div>
+          <div class="axis-detail"><i class="fa-solid fa-check"></i> <span>Pipeline comercial simple con notificaciones</span></div>
+          <div class="axis-detail"><i class="fa-solid fa-check"></i> <span>Alertas de licitaciones y fechas límite</span></div>
+        </div>
+        <div class="axis-tools">
+          <span class="axis-tool-tag"><i class="fa-solid fa-diagram-project"></i> n8n</span>
+          <span class="axis-tool-tag"><i class="fa-solid fa-database"></i> Supabase</span>
+          <span class="axis-tool-tag"><i class="fa-solid fa-file-pdf"></i> Google Docs</span>
+        </div>
+      </div>
+
+      <!-- Operaciones -->
+      <div class="axis-card">
+        <div class="axis-card-header">
+          <div class="axis-icon"><i class="fa-solid fa-gears"></i></div>
+          <div>
+            <div class="axis-name">Operaciones</div>
+            <div class="axis-who">Work Orders · Scheduling · Reportes de Campo</div>
+          </div>
+        </div>
+        <div class="axis-details">
+          <div class="axis-detail"><i class="fa-solid fa-check"></i> <span>Digitalización de órdenes de trabajo (papel → app web)</span></div>
+          <div class="axis-detail"><i class="fa-solid fa-check"></i> <span>Programación de mantenimiento con recordatorios</span></div>
+          <div class="axis-detail"><i class="fa-solid fa-check"></i> <span>Reportes de campo que se consolidan automáticamente</span></div>
+          <div class="axis-detail"><i class="fa-solid fa-check"></i> <span>Seguimiento de equipos y materiales en tiempo real</span></div>
+        </div>
+        <div class="axis-tools">
+          <span class="axis-tool-tag"><i class="fa-solid fa-diagram-project"></i> n8n</span>
+          <span class="axis-tool-tag"><i class="fa-solid fa-database"></i> Supabase</span>
+          <span class="axis-tool-tag"><i class="fa-solid fa-mobile-screen"></i> App Web</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ──── Section 3: Metodología ──── -->
+<section class="section" id="metodologia">
+  <div class="container">
+    <div class="section-label">Cómo lo Hacemos</div>
+    <h2 class="section-title">Metodología en 3 fases</h2>
+    <p class="section-subtitle">
+      No hacemos capacitaciones genéricas. Auditamos, entrenamos en su propia data y acompañamos hasta que el equipo sea autónomo.
+    </p>
+    <div class="methodology-timeline fade-in">
+      <div class="method-step">
+        <div class="method-step-num">1</div>
+        <h3>Auditoría de Procesos</h3>
+        <p>Mapeamos los flujos actuales del área, identificamos cuellos de botella y definimos los procesos a automatizar con mayor impacto.</p>
+        <span class="method-duration">Semana 1–2</span>
+      </div>
+      <div class="method-step">
+        <div class="method-step-num">2</div>
+        <h3>Capacitación Práctica</h3>
+        <p>Talleres hands-on con la data real del área. El equipo construye sus propias automatizaciones en n8n guiado por Futuraria.</p>
+        <span class="method-duration">Semana 3–6</span>
+      </div>
+      <div class="method-step">
+        <div class="method-step-num">3</div>
+        <h3>Acompañamiento</h3>
+        <p>Soporte post-capacitación: revisión de flujos, resolución de dudas, optimización. Hasta que el equipo vuele solo.</p>
+        <span class="method-duration">Semana 7–12</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ──── Section 4: Resultados Esperados ──── -->
+<section class="section" id="resultados" style="background: rgba(17,24,39,0.5);">
+  <div class="container">
+    <div class="section-label">Impacto</div>
+    <h2 class="section-title">Resultados esperados</h2>
+    <p class="section-subtitle">
+      Basados en proyectos similares con empresas de servicios. KPIs conservadores, validados en campo.
+    </p>
+    <div class="results-grid fade-in">
+      <div class="result-card">
+        <div class="result-value">−35%</div>
+        <div class="result-label">Horas administrativas<br>reducidas</div>
+      </div>
+      <div class="result-card">
+        <div class="result-value">−50%</div>
+        <div class="result-label">Errores en<br>facturación</div>
+      </div>
+      <div class="result-card">
+        <div class="result-value">+40%</div>
+        <div class="result-label">Velocidad en<br>cotizaciones</div>
+      </div>
+      <div class="result-card">
+        <div class="result-value">4–8M</div>
+        <div class="result-label">ROI estimado<br>en meses</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ──── Section 5: Lo que NO hacemos ──── -->
+<section class="section" id="no-hacemos">
+  <div class="container">
+    <div class="section-label">Expectativas Claras</div>
+    <h2 class="section-title">Lo que NO cubrimos</h2>
+    <p class="section-subtitle">
+      Somos quirúrgicos. Esto está fuera de nuestro alcance — y preferimos decirlo antes que prometerlo.
+    </p>
+    <div class="out-grid fade-in">
+      <div class="out-card">
+        <div class="out-icon"><i class="fa-solid fa-xmark"></i></div>
+        <div>
+          <h4>Mantenimiento predictivo con IoT</h4>
+          <p>Requiere sensores, data science y modelos estadísticos avanzados. Eso necesita un especialista en ML.</p>
+        </div>
+      </div>
+      <div class="out-card">
+        <div class="out-icon"><i class="fa-solid fa-xmark"></i></div>
+        <div>
+          <h4>Machine Learning avanzado</h4>
+          <p>Modelos predictivos, computer vision, NLP complejo. No es el foco de esta capacitación.</p>
+        </div>
+      </div>
+      <div class="out-card">
+        <div class="out-icon"><i class="fa-solid fa-xmark"></i></div>
+        <div>
+          <h4>Integraciones pesadas con ERPs legacy</h4>
+          <p>SAP, Oracle, sistemas on-premise antiguos. Requieren desarrollo tradicional, no low-code.</p>
+        </div>
+      </div>
+      <div class="out-card">
+        <div class="out-icon"><i class="fa-solid fa-xmark"></i></div>
+        <div>
+          <h4>Capacitación a personal operativo de campo</h4>
+          <p>Obreros y operadores de maquinaria no son el público objetivo. El foco está en equipos administrativos y de gestión.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ──── Footer CTA ──── -->
+<section class="footer-cta" id="cta">
+  <div class="container">
+    <h2>¿Listo para que tu equipo opere<br>sin depender de TI?</h2>
+    <p>Hablemos. Sin compromiso. Identificamos juntos los procesos de GHCoin con mayor potencial de automatización.</p>
+    <a href="https://wa.me/51987654321?text=Hola%20Futuraria%2C%20quiero%20información%20sobre%20la%20capacitación%20en%20automatización%20para%20GHCoin" class="btn-primary" target="_blank" rel="noopener">
+      <i class="fa-brands fa-whatsapp"></i> Hablar por WhatsApp
+    </a>
+  </div>
+</section>
+
+<footer class="footer-bottom">
+  <div class="container">
+    <p>GHCoin S.A.C. × <span>Futuraria</span> — Capacitación en Automatización con IA · 2026</p>
+  </div>
+</footer>
+
+<!-- ──── Scroll Animation ──── -->
+<script>
+(function() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+})();
+</script>
+
+</body>
+</html>
