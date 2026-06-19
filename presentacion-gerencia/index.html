@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="es-PE">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GHCoin × Futuraria — Propuesta de Automatización</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root {
+  --bg: #0b0f17;
+  --bg-card: #111827;
+  --bg-card-hover: #161e2e;
+  --gold: #d4a853;
+  --gold-light: #e8c97a;
+  --gold-dark: #b8922e;
+  --text: #e2e8f0;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --border: #1e293b;
+  --border-gold: rgba(212,168,83,0.25);
+  --green: #10b981;
+  --red: #ef4444;
+  --red-bg: rgba(239,68,68,0.08);
+  --green-bg: rgba(16,185,129,0.08);
+  --gold-bg: rgba(212,168,83,0.06);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Background texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 10%, rgba(212,168,83,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 50%, rgba(212,168,83,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 50% 90%, rgba(212,168,83,0.05) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Grid pattern */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+section, header, footer { position: relative; z-index: 1; }
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Animations */
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1), transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Typography */
+h1 { font-size: clamp(2rem, 4.5vw, 3.5rem); font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.5rem, 3vw, 2.5rem); font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; }
+h3 { font-size: 1.25rem; font-weight: 600; line-height: 1.3; }
+
+.section-label {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  margin-bottom: 12px;
+  padding: 4px 12px;
+  border: 1px solid var(--border-gold);
+  border-radius: 100px;
+  background: rgba(212,168,83,0.08);
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  max-width: 700px;
+  margin-top: 8px;
+}
+
+/* ===== HERO ===== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 120px 24px 80px;
+  position: relative;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 60% at 50% 30%, rgba(212,168,83,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero h1 {
+  max-width: 900px;
+  background: linear-gradient(135deg, var(--text) 0%, var(--gold-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero .subtitle-hero {
+  font-size: clamp(1.05rem, 2vw, 1.25rem);
+  color: var(--text-muted);
+  max-width: 700px;
+  margin-top: 16px;
+}
+
+.metric-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 56px;
+  max-width: 900px;
+  width: 100%;
+}
+
+.metric-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px 20px;
+  text-align: center;
+  transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.metric-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-gold);
+  box-shadow: 0 8px 32px rgba(212,168,83,0.1);
+}
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.metric-card:hover::before { opacity: 1; }
+
+.metric-card .metric-value {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--gold);
+  letter-spacing: -0.02em;
+  display: block;
+}
+.metric-card .metric-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+.hero-cta {
+  margin-top: 48px;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  color: #0b0f17;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 16px 36px;
+  border-radius: 100px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.3s;
+  font-family: inherit;
+}
+.btn-primary:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 32px rgba(212,168,83,0.3);
+}
+
+.hero-note {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-top: 16px;
+}
+
+/* ===== SECTIONS ===== */
+.section {
+  padding: 100px 24px;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+/* ===== SECTION 2: COMPARISON ===== */
+.comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.comparison-card {
+  border-radius: 16px;
+  padding: 36px;
+  position: relative;
+  border: 1px solid var(--border);
+}
+.comparison-card.today {
+  background: var(--red-bg);
+  border-color: rgba(239,68,68,0.15);
+}
+.comparison-card.futuraria {
+  background: var(--green-bg);
+  border-color: var(--border-gold);
+  box-shadow: 0 4px 24px rgba(212,168,83,0.06);
+}
+
+.comparison-card .card-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 5px 14px;
+  border-radius: 100px;
+  margin-bottom: 20px;
+}
+.comparison-card.today .card-badge {
+  background: rgba(239,68,68,0.15);
+  color: var(--red);
+}
+.comparison-card.futuraria .card-badge {
+  background: rgba(212,168,83,0.15);
+  color: var(--gold);
+}
+
+.comparison-card ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.comparison-card ul li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+.comparison-card.today ul li::before {
+  content: '✕';
+  color: var(--red);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.comparison-card.futuraria ul li::before {
+  content: '✓';
+  color: var(--green);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.comparison-note {
+  text-align: center;
+  margin-top: 32px;
+  padding: 14px 24px;
+  background: rgba(212,168,83,0.05);
+  border: 1px solid var(--border-gold);
+  border-radius: 12px;
+  font-size: 0.9rem;
+  color: var(--gold-light);
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ===== SECTION 3: STEPS ===== */
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  max-width: 1000px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* Timeline connector */
+.steps-grid::before {
+  content: '';
+  position: absolute;
+  top: 52px;
+  left: 16%;
+  right: 16%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dark), var(--gold), var(--gold-dark), transparent);
+  z-index: 0;
+}
+
+.step-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px 24px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s, border-color 0.3s;
+}
+.step-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-gold);
+}
+
+.step-number {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  color: #0b0f17;
+  font-size: 1.3rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.step-card h3 {
+  margin-bottom: 10px;
+}
+.step-card p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.cost-card {
+  max-width: 700px;
+  margin: 48px auto 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cost-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0;
+}
+.cost-row + .cost-row {
+  border-top: 1px solid var(--border);
+}
+.cost-row .cost-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.cost-row .cost-text {
+  flex: 1;
+}
+.cost-row .cost-text strong {
+  display: block;
+  font-size: 0.95rem;
+}
+.cost-row .cost-text span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ===== SECTION 4: SAVINGS ===== */
+.savings-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.savings-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  transition: transform 0.3s, border-color 0.3s;
+}
+.savings-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-gold);
+}
+
+.savings-card .savings-icon {
+  font-size: 1.6rem;
+  margin-bottom: 10px;
+}
+.savings-card .savings-name {
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+.savings-card .savings-amount {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.savings-card .savings-detail {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.total-card {
+  max-width: 1000px;
+  margin: 32px auto 0;
+  background: linear-gradient(135deg, rgba(212,168,83,0.08), rgba(212,168,83,0.03));
+  border: 1px solid var(--border-gold);
+  border-radius: 16px;
+  padding: 32px;
+  text-align: center;
+}
+
+.total-card .total-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.total-card .total-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+.total-card .total-item {
+  text-align: center;
+}
+.total-card .total-value {
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--gold);
+}
+.total-card .total-label-sm {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.total-card .total-separator {
+  width: 1px;
+  height: 40px;
+  background: var(--border-gold);
+}
+
+/* ===== SECTION 5: FORMULA ===== */
+.formula-card {
+  max-width: 800px;
+  margin: 0 auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border-gold);
+  border-radius: 16px;
+  padding: 36px;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.formula-display {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--gold-light);
+  padding: 20px;
+  background: rgba(212,168,83,0.06);
+  border-radius: 12px;
+  border: 1px solid var(--border-gold);
+  margin: 20px 0;
+}
+
+.formula-explanation {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+.example-card {
+  max-width: 800px;
+  margin: 0 auto 40px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+}
+
+.example-card h3 {
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+}
+
+.example-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.example-table th {
+  text-align: left;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.example-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.example-table .auto-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--green);
+  background: rgba(16,185,129,0.1);
+}
+.example-table .manual-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  background: rgba(100,116,139,0.1);
+}
+.example-table .total-row td {
+  font-weight: 700;
+  color: var(--text);
+  border-bottom: none;
+}
+.example-table .total-row .highlight {
+  color: var(--gold);
+  font-weight: 800;
+}
+
+.methodology-note {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 16px 24px;
+  background: rgba(212,168,83,0.04);
+  border: 1px solid var(--border-gold);
+  border-radius: 12px;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+/* ===== SECTION 6: CALCULATOR ===== */
+.calculator-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 36px;
+}
+
+.calc-header-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 12px;
+  padding: 0 0 12px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+.calc-header-row span {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+}
+
+.calc-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+}
+.calc-row + .calc-row {
+  border-top: 1px solid var(--border);
+}
+
+.calc-row input {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--bg-card-hover);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: border-color 0.2s;
+}
+.calc-row input:focus {
+  outline: none;
+  border-color: var(--gold-dark);
+}
+
+.calc-row input[type="number"] {
+  text-align: center;
+}
+
+.calc-row .process-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.add-process-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 10px 20px;
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.add-process-btn:hover {
+  border-color: var(--gold-dark);
+  color: var(--gold-light);
+}
+
+.remove-btn {
+  background: transparent;
+  border: none;
+  color: var(--red);
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+.remove-btn:hover {
+  background: rgba(239,68,68,0.1);
+}
+
+.calc-results {
+  margin-top: 32px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.calc-result-card {
+  background: var(--bg-card-hover);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+}
+.calc-result-card.savings-card-result {
+  border-color: rgba(16,185,129,0.2);
+  background: rgba(16,185,129,0.04);
+}
+
+.calc-result-card .result-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.calc-result-card .result-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text);
+}
+.calc-result-card.savings-card-result .result-value {
+  color: var(--green);
+}
+
+.calc-note {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+/* ===== SECTION 7: CTA ===== */
+.cta-section {
+  text-align: center;
+  padding: 100px 24px;
+  position: relative;
+}
+
+.cta-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(212,168,83,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.cta-section .cta-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  max-width: 600px;
+  margin: 16px auto 32px;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.footer-brand {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+.footer-disclaimer {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-top: 8px;
+  opacity: 0.7;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .savings-grid { grid-template-columns: repeat(2, 1fr); }
+  .steps-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .calc-header-row, .calc-row { grid-template-columns: 2fr 1fr 1fr 1fr; font-size: 0.8rem; }
+}
+
+@media (max-width: 768px) {
+  .hero { padding: 80px 20px 60px; }
+  .section { padding: 64px 20px; }
+  .metric-cards { grid-template-columns: 1fr; gap: 12px; max-width: 360px; }
+  .comparison-grid { grid-template-columns: 1fr; }
+  .steps-grid { grid-template-columns: 1fr; gap: 20px; }
+  .steps-grid::before { display: none; }
+  .savings-grid { grid-template-columns: 1fr; max-width: 400px; }
+  .calc-results { grid-template-columns: 1fr; }
+  .calc-header-row, .calc-row {
+    grid-template-columns: 1fr 0.8fr 0.8fr 0.8fr;
+    gap: 6px;
+  }
+  .calc-row input { padding: 8px 6px; font-size: 0.78rem; }
+  .calc-header-row span { font-size: 0.6rem; }
+  .total-card .total-row { gap: 20px; }
+  .total-card .total-separator { display: none; }
+  .cost-card { padding: 20px; }
+  .calculator-wrapper { padding: 20px; }
+}
+
+@media (max-width: 480px) {
+  .calc-header-row, .calc-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+  }
+  .calc-header-row span:nth-child(3),
+  .calc-header-row span:nth-child(4),
+  .calc-row input:nth-child(3),
+  .calc-row input:nth-child(4) {
+    /* collapse to 2 col layout */
+  }
+  .btn-primary { padding: 14px 24px; font-size: 0.9rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== SECTION 1: HERO ===== -->
+<header class="hero" id="hero">
+  <div class="fade-in">
+    <h1>GHCoin está perdiendo S/192,000 al año en procesos manuales</h1>
+    <p class="subtitle-hero">990 horas al mes que su equipo pierde digitando, archivando y persiguiendo papeles.</p>
+  </div>
+
+  <div class="metric-cards">
+    <div class="metric-card fade-in">
+      <span class="metric-value">S/ 191,996</span>
+      <span class="metric-label">Ahorro anual estimado</span>
+    </div>
+    <div class="metric-card fade-in">
+      <span class="metric-value">990 hrs/mes</span>
+      <span class="metric-label">Horas liberadas</span>
+    </div>
+    <div class="metric-card fade-in">
+      <span class="metric-value">43 procesos</span>
+      <span class="metric-label">Automatizables</span>
+    </div>
+  </div>
+
+  <div class="hero-cta fade-in">
+    <a href="#comparison" class="btn-primary">
+      Ver cómo <i class="fa-solid fa-arrow-down"></i>
+    </a>
+  </div>
+  <p class="hero-note fade-in">Estimación conservadora. Perfiles y sueldos reales Perú.</p>
+</header>
+
+<!-- ===== SECTION 2: EL DOLOR ===== -->
+<section class="section" id="comparison">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-label">El Problema</span>
+      <h2>Lo que hoy le cuesta a GHCoin no tener visibilidad</h2>
+    </div>
+
+    <div class="comparison-grid">
+      <div class="comparison-card today fade-in">
+        <span class="card-badge">HOY</span>
+        <ul>
+          <li>70 vehículos monitoreados con llamadas y WhatsApp.</li>
+          <li>Datos en Excel dispersos, sin consolidar.</li>
+          <li>Mantenimiento reactivo (se repara cuando se rompe).</li>
+          <li>2-3 semanas de desfase para saber el rendimiento real de cada vehículo.</li>
+          <li>Sin trazabilidad de kilómetros ni galones.</li>
+        </ul>
+      </div>
+
+      <div class="comparison-card futuraria fade-in">
+        <span class="card-badge">CON FUTURARIA</span>
+        <ul>
+          <li>Dashboard en tiempo real desde cualquier dispositivo.</li>
+          <li>Datos automáticos: el conductor solo saca 2 fotos.</li>
+          <li>Mantenimiento basado en uso real, no en calendario fijo.</li>
+          <li>Alertas inmediatas de anomalías de rendimiento.</li>
+          <li>Trazabilidad completa de cada kilómetro y cada galón.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="comparison-note fade-in">
+      <i class="fa-solid fa-lightbulb" style="color: var(--gold); margin-right: 8px;"></i>
+      Una reparación mayor evitada paga el sistema completo. (Costo típico: S/12,000–S/15,000 por reparación mayor)
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 3: LA HERRAMIENTA ===== -->
+<section class="section" id="solution">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-label">La Solución</span>
+      <h2>Cómo funciona — 3 pasos, cero instalación</h2>
+    </div>
+
+    <div class="steps-grid">
+      <div class="step-card fade-in">
+        <div class="step-number">1</div>
+        <h3>El conductor saca 2 fotos</h3>
+        <p>Foto del ticket de grifo + foto del odómetro. Desde su celular Xiaomi de la empresa. <strong>Sin instalar apps.</strong> Funciona sin señal (offline) en zona minera. Se abre en Chrome.</p>
+      </div>
+
+      <div class="step-card fade-in">
+        <div class="step-number">2</div>
+        <h3>La IA extrae los datos</h3>
+        <p>Gemini OCR procesa las fotos: galones cargados, kilometraje, monto, fecha, grifo. Alta precisión en español, incluso con tickets arrugados o fotos con poca luz.</p>
+      </div>
+
+      <div class="step-card fade-in">
+        <div class="step-number">3</div>
+        <h3>El sistema calcula y alerta</h3>
+        <p>Rendimiento = km/galones. Si baja del umbral esperado (ej: &lt; 28 km/gal en carretera), alerta inmediata a supervisión. Dashboard en tiempo real para gerencia.</p>
+      </div>
+    </div>
+
+    <div class="cost-card fade-in">
+      <div class="cost-row">
+        <span class="cost-icon">💰</span>
+        <div class="cost-text">
+          <strong>App de monitoreo: S/ 0</strong>
+          <span>Sin costo de licencia. PWA que funciona en cualquier navegador.</span>
+        </div>
+      </div>
+      <div class="cost-row">
+        <span class="cost-icon">📸</span>
+        <div class="cost-text">
+          <strong>OCR por lectura: ~S/ 0.05</strong>
+          <span>~70 vehículos × 8 cargas/mes = S/ 28/mes total.</span>
+        </div>
+      </div>
+      <div class="cost-row">
+        <span class="cost-icon">🔌</span>
+        <div class="cost-text">
+          <strong>Opcional: OBD-II (US$ 7/vehículo)</strong>
+          <span>Captura automática del odómetro sin fotos. Costo único.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 4: LA MATEMÁTICA ===== -->
+<section class="section" id="savings">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-label">El Retorno</span>
+      <h2>¿Cuánto ahorra cada área?</h2>
+      <p class="subtitle">43 procesos en 6 áreas. No son estimaciones vagas: cada porcentaje se calcula con fórmula exacta.</p>
+    </div>
+
+    <div class="savings-grid">
+      <div class="savings-card fade-in">
+        <div class="savings-icon">🚛</div>
+        <div class="savings-name">Operaciones</div>
+        <div class="savings-amount">S/ 67,540/año</div>
+        <div class="savings-detail">8 procesos · 345 hrs/mes</div>
+      </div>
+      <div class="savings-card fade-in">
+        <div class="savings-icon">💼</div>
+        <div class="savings-name">Comercial</div>
+        <div class="savings-amount">S/ 16,874/año</div>
+        <div class="savings-detail">3 procesos · 100 hrs/mes</div>
+      </div>
+      <div class="savings-card fade-in">
+        <div class="savings-icon">📊</div>
+        <div class="savings-name">Admin/Financiero</div>
+        <div class="savings-amount">S/ 42,656/año</div>
+        <div class="savings-detail">10 procesos · 235 hrs/mes</div>
+      </div>
+      <div class="savings-card fade-in">
+        <div class="savings-icon">👥</div>
+        <div class="savings-name">RRHH</div>
+        <div class="savings-amount">S/ 38,861/año</div>
+        <div class="savings-detail">10 procesos · 191 hrs/mes</div>
+      </div>
+      <div class="savings-card fade-in">
+        <div class="savings-icon">🏛️</div>
+        <div class="savings-name">SUNAT</div>
+        <div class="savings-amount">S/ 13,631/año</div>
+        <div class="savings-detail">8 procesos · 70 hrs/mes</div>
+      </div>
+      <div class="savings-card fade-in">
+        <div class="savings-icon">🛡️</div>
+        <div class="savings-name">Cumplimiento</div>
+        <div class="savings-amount">S/ 12,434/año</div>
+        <div class="savings-detail">4 procesos · 49 hrs/mes</div>
+      </div>
+    </div>
+
+    <div class="total-card fade-in">
+      <div class="total-label">Resumen Total</div>
+      <div class="total-row">
+        <div class="total-item">
+          <div class="total-value">S/ 191,996</div>
+          <div class="total-label-sm">ahorro/año</div>
+        </div>
+        <div class="total-separator"></div>
+        <div class="total-item">
+          <div class="total-value">990</div>
+          <div class="total-label-sm">horas/mes liberadas</div>
+        </div>
+        <div class="total-separator"></div>
+        <div class="total-item">
+          <div class="total-value">43</div>
+          <div class="total-label-sm">procesos automatizados</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 5: LA FÓRMULA ===== -->
+<section class="section" id="formula">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-label">La Metodología</span>
+      <h2>¿De dónde sale el 85%? La fórmula.</h2>
+      <p class="subtitle">No inventamos porcentajes. Cada número se calcula proceso por proceso.</p>
+    </div>
+
+    <div class="formula-card fade-in">
+      <div class="formula-display">
+        % Automatizable = (Minutos de tareas regladas ÷ Minutos totales del proceso) × 100
+      </div>
+      <p class="formula-explanation">
+        <strong>Tareas regladas</strong> = digitar, copiar, pegar, enviar emails, generar PDFs, calcular totales.<br>
+        <strong>Tareas NO regladas</strong> = revisar excepciones, tomar decisiones, aprobar fuera de política.
+      </p>
+    </div>
+
+    <div class="example-card fade-in">
+      <h3>Facturación Mensual — desglose real</h3>
+      <table class="example-table">
+        <thead>
+          <tr>
+            <th>Tarea</th>
+            <th>Min</th>
+            <th>% Automatizable</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Abrir Excel y copiar datos</td>
+            <td>5 min</td>
+            <td><span class="auto-badge">100%</span></td>
+          </tr>
+          <tr>
+            <td>Calcular totales e impuestos</td>
+            <td>10 min</td>
+            <td><span class="auto-badge">95%</span></td>
+          </tr>
+          <tr>
+            <td>Generar PDF</td>
+            <td>8 min</td>
+            <td><span class="auto-badge">100%</span></td>
+          </tr>
+          <tr>
+            <td>Enviar a cliente</td>
+            <td>7 min</td>
+            <td><span class="auto-badge">100%</span></td>
+          </tr>
+          <tr>
+            <td>Revisar excepciones</td>
+            <td>5 min</td>
+            <td><span class="manual-badge">0%*</span></td>
+          </tr>
+          <tr>
+            <td>Registrar en contabilidad</td>
+            <td>5 min</td>
+            <td><span class="auto-badge">90%</span></td>
+          </tr>
+          <tr class="total-row">
+            <td>TOTAL</td>
+            <td>40 min</td>
+            <td><span class="highlight">85%</span> (34 min)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="methodology-note fade-in">
+      * Aplicamos esta misma fórmula a los 43 procesos. El 10–15% restante es supervisión humana para normativa contable y excepciones.
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 6: CALCULADORA ===== -->
+<section class="section" id="calculator">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-label">Calculadora</span>
+      <h2>Simule el ahorro de su equipo</h2>
+      <p class="subtitle">Ingrese procesos reales de GHCoin y vea el retorno inmediato.</p>
+    </div>
+
+    <div class="calculator-wrapper fade-in">
+      <div class="calc-header-row">
+        <span>Proceso</span>
+        <span>Min/vez</span>
+        <span>Veces/mes</span>
+        <span>Costo/hr (S/)</span>
+      </div>
+
+      <div id="calc-rows">
+        <!-- Filled by JS -->
+      </div>
+
+      <button class="add-process-btn" onclick="addProcess()">
+        <i class="fa-solid fa-plus"></i> Agregar proceso
+      </button>
+
+      <div class="calc-results" id="calc-results">
+        <!-- Filled by JS -->
+      </div>
+
+      <p class="calc-note">* Cálculo con reducción del 70%. En procesos puramente administrativos, el ahorro real es 85%+.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 7: CTA FINAL ===== -->
+<section class="cta-section fade-in">
+  <h2>La decisión es matemática, no de fe.</h2>
+  <p class="cta-subtitle">1 reparación mayor evitada (S/12–15K) ya pagó el sistema. Todo lo demás es ganancia neta.</p>
+  <a href="#calculator" class="btn-primary" style="font-size: 1.1rem; padding: 18px 42px;">
+    Aprobar piloto — 2 semanas, 2 Hilux, costo 0
+  </a>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer fade-in">
+  <div class="footer-brand">GHCoin S.A.C. × Futuraria — Propuesta de Automatización · Junio 2026</div>
+  <div class="footer-disclaimer">Cifras con perfiles y sueldos reales del mercado peruano. Estimaciones conservadoras.</div>
+</footer>
+
+<script>
+// ===== FADE-IN ANIMATION =====
+const fadeObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+
+// ===== SMOOTH SCROLL FOR CTA BUTTONS =====
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+// ===== CALCULATOR =====
+const formatter = new Intl.NumberFormat('es-PE', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+});
+
+const defaultProcesses = [
+  { name: 'Parte diario de flota', mins: 30, times: 160, rate: 14.20 },
+  { name: 'Facturación mensual', mins: 40, times: 20, rate: 15.91 },
+  { name: 'Control de asistencia', mins: 20, times: 40, rate: 25.57 }
+];
+
+let processIdCounter = 0;
+
+function createProcessRow(process, id) {
+  const row = document.createElement('div');
+  row.className = 'calc-row';
+  row.dataset.id = id;
+  row.innerHTML = `
+    <input type="text" class="process-name" value="${process.name || ''}" placeholder="Nombre del proceso" data-field="name">
+    <input type="number" class="process-mins" value="${process.mins || ''}" placeholder="0" min="0" step="1" data-field="mins">
+    <input type="number" class="process-times" value="${process.times || ''}" placeholder="0" min="0" step="1" data-field="times">
+    <input type="number" class="process-rate" value="${process.rate || ''}" placeholder="0.00" min="0" step="0.01" data-field="rate">
+    <button class="remove-btn" title="Eliminar" onclick="removeProcess(${id})"><i class="fa-solid fa-trash-can"></i></button>
+  `;
+
+  row.querySelectorAll('input').forEach(input => {
+    input.addEventListener('input', recalculate);
+  });
+
+  return row;
+}
+
+function addProcess(data) {
+  const proc = data || { name: '', mins: '', times: '', rate: '' };
+  const id = ++processIdCounter;
+  const row = createProcessRow(proc, id);
+  document.getElementById('calc-rows').appendChild(row);
+  recalculate();
+  return id;
+}
+
+function removeProcess(id) {
+  const row = document.querySelector(`.calc-row[data-id="${id}"]`);
+  if (row) {
+    row.remove();
+    recalculate();
+  }
+}
+
+function recalculate() {
+  const rows = document.querySelectorAll('#calc-rows .calc-row');
+  let totalMonthly = 0;
+  let processCount = 0;
+
+  rows.forEach(row => {
+    const mins = parseFloat(row.querySelector('[data-field="mins"]').value) || 0;
+    const times = parseFloat(row.querySelector('[data-field="times"]').value) || 0;
+    const rate = parseFloat(row.querySelector('[data-field="rate"]').value) || 0;
+
+    if (mins > 0 && times > 0 && rate > 0) {
+      const monthlyCost = (mins / 60) * times * rate;
+      totalMonthly += monthlyCost;
+      processCount++;
+    }
+  });
+
+  const annualCost = totalMonthly * 12;
+  const savings = annualCost * 0.70;
+
+  const resultsDiv = document.getElementById('calc-results');
+  resultsDiv.innerHTML = `
+    <div class="calc-result-card">
+      <div class="result-label">Costo mensual actual</div>
+      <div class="result-value">S/ ${formatter.format(totalMonthly)}</div>
+    </div>
+    <div class="calc-result-card">
+      <div class="result-label">Costo anual</div>
+      <div class="result-value">S/ ${formatter.format(annualCost)}</div>
+    </div>
+    <div class="calc-result-card savings-card-result">
+      <div class="result-label">Ahorro estimado (70%)</div>
+      <div class="result-value">S/ ${formatter.format(savings)}</div>
+    </div>
+  `;
+}
+
+// Initialize calculator with default processes
+defaultProcesses.forEach(proc => addProcess(proc));
+recalculate();
+</script>
+</body>
+</html>
