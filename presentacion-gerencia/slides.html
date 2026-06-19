@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GHCoin × Futuraria — Presentación Gerencia (Slides)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0b0f17;
+  --bg-card: #111827;
+  --gold: #d4a853;
+  --gold-light: #e8c97a;
+  --text: #e2e8f0;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --border: #1e293b;
+  --green: #10b981;
+  --slide-w: 1280px;
+  --slide-h: 720px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #060912;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  gap: 60px;
+}
+
+.slide {
+  width: var(--slide-w);
+  height: var(--slide-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 64px 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+/* Background texture */
+.slide::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(212,168,83,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 40% at 80% 60%, rgba(212,168,83,0.02) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Slide number */
+.slide-num {
+  position: absolute;
+  top: 32px; right: 40px;
+  font-size: 0.75rem; font-weight: 600;
+  color: var(--text-dim); letter-spacing: 0.1em;
+}
+
+/* Label */
+.slide-label {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 0.75rem; font-weight: 600; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 20px;
+}
+.slide-label::before {
+  content: ''; width: 24px; height: 1.5px;
+  background: var(--gold); border-radius: 1px;
+}
+
+/* Title */
+.slide-title {
+  font-size: 2.2rem; font-weight: 800; line-height: 1.15;
+  letter-spacing: -0.02em; margin-bottom: 20px; max-width: 900px;
+}
+.slide-title .gold { color: var(--gold); }
+
+/* Subtitle */
+.slide-subtitle {
+  font-size: 1.05rem; color: var(--text-muted);
+  max-width: 700px; line-height: 1.65;
+}
+
+/* Grid */
+.slide-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; width: 100%; }
+.slide-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; width: 100%; }
+
+/* Card */
+.slide-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 36px;
+}
+.slide-card.gold { border-color: rgba(212,168,83,0.25); }
+.slide-card.red { border-color: rgba(239,68,68,0.15); background: rgba(239,68,68,0.03); }
+.slide-card-icon {
+  width: 44px; height: 44px;
+  background: rgba(212,168,83,0.1); border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gold); font-size: 1.1rem; margin-bottom: 16px;
+}
+.slide-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+.slide-card p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; }
+.slide-card ul { list-style: none; padding: 0; margin-top: 12px; }
+.slide-card li {
+  font-size: 0.82rem; color: var(--text-muted);
+  padding: 5px 0; display: flex; align-items: flex-start; gap: 8px;
+}
+.slide-card li::before {
+  content: '▸'; color: var(--gold); flex-shrink: 0; font-size: 0.7rem; margin-top: 3px;
+}
+
+/* Step cards */
+.step-num {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: rgba(212,168,83,0.1); border: 2px solid rgba(212,168,83,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; font-weight: 800; color: var(--gold);
+  margin-bottom: 20px;
+}
+
+/* Big number */
+.big-num {
+  font-size: 5rem; font-weight: 900; color: var(--gold);
+  line-height: 1; letter-spacing: -0.03em;
+}
+.big-num-label {
+  font-size: 1rem; color: var(--text-muted); margin-top: 8px;
+}
+
+/* Highlight box */
+.highlight-box {
+  background: rgba(212,168,83,0.06); border: 1px solid rgba(212,168,83,0.2);
+  border-radius: 10px; padding: 20px 28px; margin-top: 28px;
+}
+.highlight-box p { font-size: 0.92rem; color: var(--text-muted); line-height: 1.6; }
+.highlight-box strong { color: var(--gold-light); }
+
+/* Formula */
+.formula-box {
+  background: var(--bg-card); border: 2px solid rgba(212,168,83,0.3);
+  border-radius: 10px; padding: 24px 32px;
+  font-family: 'Inter', monospace;
+  font-size: 1.1rem; color: var(--gold-light);
+  text-align: center; margin: 16px 0;
+}
+
+/* Table */
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  text-align: left; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text-dim);
+  padding: 8px 0; border-bottom: 1px solid var(--border);
+}
+.data-table td {
+  padding: 7px 0; font-size: 0.82rem;
+  color: var(--text-muted); border-bottom: 1px solid rgba(30,41,59,0.5);
+}
+.data-table td:last-child { color: var(--text); font-weight: 600; text-align: right; }
+.data-table .gold { color: var(--gold); }
+.data-table .total-row td { border-top: 2px solid rgba(212,168,83,0.3); padding-top: 10px; font-weight: 700; color: var(--gold); font-size: 0.9rem; }
+
+/* Slide 1: Portada */
+.slide-portada {
+  display: flex; flex-direction: column; justify-content: center;
+  align-items: flex-start;
+}
+.slide-portada .logo-line {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 60px;
+  font-weight: 600; font-size: 0.95rem; color: var(--text-dim);
+}
+.slide-portada .logo-dot {
+  width: 10px; height: 10px; border-radius: 50%; background: var(--gold);
+}
+.slide-portada h1 { font-size: 3rem; font-weight: 900; line-height: 1.1; letter-spacing: -0.03em; }
+.slide-portada .meta {
+  margin-top: 40px; font-size: 0.82rem; color: var(--text-dim);
+  display: flex; gap: 24px;
+}
+
+/* Footer logo */
+.slide-footer {
+  position: absolute; bottom: 32px; left: 80px; right: 80px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.7rem; color: var(--text-dim); letter-spacing: 0.04em;
+}
+
+/* Comparison columns */
+.compare-col {
+  display: flex; flex-direction: column; gap: 18px;
+}
+.compare-col h3 {
+  font-size: 0.8rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; margin-bottom: 6px;
+}
+.compare-col .vs-title {
+  font-size: 0.85rem; font-weight: 600; padding: 6px 14px;
+  border-radius: 6px; display: inline-block; margin-bottom: 12px;
+  width: fit-content;
+}
+.compare-col.red .vs-title { color: #ef4444; background: rgba(239,68,68,0.1); }
+.compare-col.gold .vs-title { color: var(--gold); background: rgba(212,168,83,0.1); }
+
+.compare-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;
+}
+.compare-item i { margin-top: 2px; flex-shrink: 0; font-size: 0.7rem; }
+.compare-col.red .compare-item i { color: #ef4444; }
+.compare-col.gold .compare-item i { color: var(--green); }
+
+/* Area cards */
+.area-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 24px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.area-card .area-icon { font-size: 1.5rem; margin-bottom: 4px; }
+.area-card .area-name { font-weight: 700; font-size: 0.9rem; }
+.area-card .area-meta { font-size: 0.72rem; color: var(--text-dim); }
+.area-card .area-hours { font-size: 0.8rem; color: var(--gold); font-weight: 600; margin-top: 4px; }
+
+/* CTA slide */
+.cta-slide { text-align: center; align-items: center; }
+.cta-slide .big-question {
+  font-size: 2.6rem; font-weight: 900; line-height: 1.2;
+  letter-spacing: -0.02em; margin-bottom: 24px;
+}
+.cta-box {
+  display: inline-flex; flex-direction: column; gap: 12px;
+  background: rgba(212,168,83,0.05); border: 1px solid rgba(212,168,83,0.2);
+  border-radius: 14px; padding: 32px 48px; text-align: center;
+}
+.cta-box .main {
+  font-size: 1.4rem; font-weight: 700; color: var(--gold-light);
+}
+.cta-box .sub {
+  font-size: 0.95rem; color: var(--text-muted);
+}
+
+/* Print styles */
+@media print {
+  body { background: #000; gap: 0; padding: 0; }
+  .slide {
+    page-break-after: always;
+    box-shadow: none; border: none; border-radius: 0;
+    width: 100vw; height: 100vh;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ====== SLIDE 1: PORTADA ====== -->
+<div class="slide slide-portada">
+  <div class="slide-num">01</div>
+  <div class="logo-line">
+    <div class="logo-dot"></div> Futuraria &times; GHCoin S.A.C.
+  </div>
+  <h1>Monitoreo Inteligente<br>de Flota</h1>
+  <p style="font-size:1.2rem;color:var(--text-muted);margin-top:16px;max-width:600px;">Propuesta de automatización para la gerencia general</p>
+  <div class="meta">
+    <span>Junio 2026</span>
+    <span style="color:var(--border);">|</span>
+    <span>Confidencial</span>
+  </div>
+  <div class="slide-footer">
+    <span>GHCoin S.A.C. &times; Futuraria</span>
+    <span>Propuesta de Automatización</span>
+  </div>
+</div>
+
+<!-- ====== SLIDE 2: EL DOLOR ====== -->
+<div class="slide">
+  <div class="slide-num">02</div>
+  <div class="slide-label">El Diagnóstico</div>
+  <h2 class="slide-title">Lo que cuesta <span class="gold">no saber</span></h2>
+  <p class="slide-subtitle">Con 70+ vehículos operando en zonas mineras, GHCoin no tiene visibilidad del rendimiento real de su flota hasta que el vehículo regresa — 2 a 3 semanas después.</p>
+
+  <div class="slide-grid-2" style="margin-top:32px;">
+    <div class="slide-card red compare-col">
+      <div class="vs-title">⬢ HOY</div>
+      <div class="compare-item"><i class="fa-solid fa-xmark"></i> Seguimiento por llamadas y WhatsApp</div>
+      <div class="compare-item"><i class="fa-solid fa-xmark"></i> Datos de rendimiento dispersos en Excel</div>
+      <div class="compare-item"><i class="fa-solid fa-xmark"></i> Mantenimiento reactivo: se repara cuando falla</div>
+      <div class="compare-item"><i class="fa-solid fa-xmark"></i> 2-3 semanas de desfase para detectar anomalías</div>
+      <div class="compare-item"><i class="fa-solid fa-xmark"></i> Sin trazabilidad: ¿qué vehículo rinde? ¿cuál no?</div>
+    </div>
+    <div class="slide-card gold compare-col">
+      <div class="vs-title">⬢ CON FUTURARIA</div>
+      <div class="compare-item"><i class="fa-solid fa-check"></i> Dashboard en tiempo real desde cualquier dispositivo</div>
+      <div class="compare-item"><i class="fa-solid fa-check"></i> Datos automáticos: el conductor solo saca 2 fotos</div>
+      <div class="compare-item"><i class="fa-solid fa-check"></i> Mantenimiento basado en uso real, no en calendario</div>
+      <div class="compare-item"><i class="fa-solid fa-check"></i> Alertas inmediatas ante bajo rendimiento</div>
+      <div class="compare-item"><i class="fa-solid fa-check"></i> Trazabilidad completa: cada km, cada galón</div>
+    </div>
+  </div>
+
+  <div class="highlight-box" style="margin-top:24px;">
+    <p>💡 <strong>Una sola reparación mayor evitada</strong> paga el sistema completo. (Costo típico: S/12,000–S/15,000 por reparación mayor en Hilux de flota minera.)</p>
+  </div>
+
+  <div class="slide-footer">
+    <span>GHCoin S.A.C. &times; Futuraria</span>
+    <span>02 / 06</span>
+  </div>
+</div>
+
+<!-- ====== SLIDE 3: LA HERRAMIENTA ====== -->
+<div class="slide">
+  <div class="slide-num">03</div>
+  <div class="slide-label">La Herramienta</div>
+  <h2 class="slide-title">3 pasos. <span class="gold">Cero instalación.</span></h2>
+  <p class="slide-subtitle">Una PWA que funciona en el celular Xiaomi que ya usa la empresa. Se abre en Chrome, opera sin señal en zona minera, no ocupa espacio.</p>
+
+  <div class="slide-grid-3" style="margin-top:40px;">
+    <div class="slide-card">
+      <div class="step-num">1</div>
+      <h3>El conductor saca 2 fotos</h3>
+      <p>Foto del ticket de combustible + foto del odómetro. Desde su celular. Sin apps nuevas. Offline.</p>
+    </div>
+    <div class="slide-card">
+      <div class="step-num">2</div>
+      <h3>La IA extrae los datos</h3>
+      <p>Gemini OCR procesa las fotos: galones, kilometraje, fecha, grifo. Alta precisión incluso con tickets arrugados.</p>
+    </div>
+    <div class="slide-card">
+      <div class="step-num">3</div>
+      <h3>El sistema calcula y alerta</h3>
+      <p>Rendimiento = km ÷ galones. Si baja del umbral, alerta a supervisión. Dashboard para gerencia en tiempo real.</p>
+    </div>
+  </div>
+
+  <div class="highlight-box" style="margin-top:28px;">
+    <p>💰 <strong>App de monitoreo: S/ 0</strong> — Sin licencia. 📸 <strong>OCR: ~S/ 0.05 por lectura</strong> (~70 vehículos × 8 cargas/mes = S/ 28/mes). 🔌 <strong>OBD-II opcional: US$ 7/veh</strong> (costo único, captura automática sin fotos).</p>
+  </div>
+
+  <div class="slide-footer">
+    <span>GHCoin S.A.C. &times; Futuraria</span>
+    <span>03 / 06</span>
+  </div>
+</div>
+
+<!-- ====== SLIDE 4: DESGLOSE POR ÁREA ====== -->
+<div class="slide">
+  <div class="slide-num">04</div>
+  <div class="slide-label">El Panorama Completo</div>
+  <h2 class="slide-title">Automatización <span class="gold">por áreas</span></h2>
+  <p class="slide-subtitle">Más allá del monitoreo de flota. Las mismas herramientas eliminan procesos manuales en toda la empresa.</p>
+
+  <div class="slide-grid-3" style="margin-top:28px;">
+    <div class="area-card">
+      <div class="area-icon">🚛</div>
+      <div class="area-name">Operaciones</div>
+      <div class="area-meta">8 procesos · Parte diario, km, combustible, mantenimiento, inventario</div>
+      <div class="area-hours">345 horas/mes liberadas</div>
+    </div>
+    <div class="area-card">
+      <div class="area-icon">📊</div>
+      <div class="area-name">Admin / Financiero</div>
+      <div class="area-meta">10 procesos · Facturación, cobranzas, conciliación, reportes, KPIs</div>
+      <div class="area-hours">235 horas/mes liberadas</div>
+    </div>
+    <div class="area-card">
+      <div class="area-icon">👥</div>
+      <div class="area-name">RRHH / Laboral</div>
+      <div class="area-meta">10 procesos · Planilla, asistencia, onboarding, certificaciones</div>
+      <div class="area-hours">191 horas/mes liberadas</div>
+    </div>
+    <div class="area-card">
+      <div class="area-icon">💼</div>
+      <div class="area-name">Comercial</div>
+      <div class="area-meta">3 procesos · Cotizaciones, contratos, seguimiento de clientes</div>
+      <div class="area-hours">100 horas/mes liberadas</div>
+    </div>
+    <div class="area-card">
+      <div class="area-icon">🏛️</div>
+      <div class="area-name">SUNAT / Tributario</div>
+      <div class="area-meta">8 procesos · PDT, detracciones, libros electrónicos, ITF</div>
+      <div class="area-hours">70 horas/mes liberadas</div>
+    </div>
+    <div class="area-card">
+      <div class="area-icon">🛡️</div>
+      <div class="area-name">Cumplimiento</div>
+      <div class="area-meta">4 procesos · Checklists SST, SOAT, permisos mina, seguros</div>
+      <div class="area-hours">49 horas/mes liberadas</div>
+    </div>
+  </div>
+
+  <div class="highlight-box" style="margin-top:16px;">
+    <p>⚡ <strong>990 horas/mes</strong> que el equipo de GHCoin puede dedicar a analizar, decidir y vender — en vez de digitar y archivar.</p>
+  </div>
+
+  <div class="slide-footer">
+    <span>GHCoin S.A.C. &times; Futuraria</span>
+    <span>04 / 06</span>
+  </div>
+</div>
+
+<!-- ====== SLIDE 5: LA METODOLOGÍA ====== -->
+<div class="slide">
+  <div class="slide-num">05</div>
+  <div class="slide-label">La Metodología</div>
+  <h2 class="slide-title">No son estimaciones al aire: <span class="gold">cada % se calcula</span></h2>
+  <p class="slide-subtitle">Desglosamos cada proceso minuto a minuto. Solo las tareas repetitivas y regladas son automatizables. Las de juicio humano se mantienen.</p>
+
+  <div class="formula-box">
+    % Automatizable = (Minutos de tareas regladas &divide; Minutos totales del proceso) <span style="color:#d4a853;">&times; 100</span>
+  </div>
+
+  <p style="font-size:0.82rem; color:var(--text-dim); text-align:center; margin-bottom:20px;">
+    <strong style="color:var(--gold-light);">Tareas regladas:</strong> digitar, copiar, pegar, enviar, generar PDFs, calcular totales, transferir datos entre sistemas &nbsp;|&nbsp;
+    <strong style="color:#ef4444;">Tareas NO regladas:</strong> revisar excepciones, aprobar fuera de política, interpretar contexto
+  </p>
+
+  <table class="data-table">
+    <tr><th>Ejemplo: Facturación Mensual</th><th>Min</th><th>Tipo</th><th style="text-align:right;">% Automatizable</th></tr>
+    <tr><td>Abrir Excel y copiar datos</td><td>5</td><td style="color:var(--gold-light);">Reglada</td><td class="gold">100%</td></tr>
+    <tr><td>Calcular IGV, totales, retenciones</td><td>10</td><td style="color:var(--gold-light);">Reglada (fórmula)</td><td class="gold">95%*</td></tr>
+    <tr><td>Generar PDF</td><td>8</td><td style="color:var(--gold-light);">Reglada</td><td class="gold">100%</td></tr>
+    <tr><td>Enviar email al cliente</td><td>7</td><td style="color:var(--gold-light);">Reglada</td><td class="gold">100%</td></tr>
+    <tr><td>Revisar facturas atípicas</td><td>5</td><td style="color:#ef4444;">Requiere juicio</td><td>0%</td></tr>
+    <tr><td>Registrar en contabilidad</td><td>5</td><td style="color:var(--gold-light);">Reglada (API)</td><td class="gold">90%</td></tr>
+    <tr class="total-row"><td>TOTAL</td><td>40</td><td></td><td>85%</td></tr>
+  </table>
+
+  <p style="font-size:0.72rem; color:var(--text-dim); margin-top:10px;">* 95% en cálculos porque la IA aplica las fórmulas, pero un contador revisa 1 de cada 20 facturas por compliance. El 10-15% restante en cada proceso es supervisión humana para cumplir normativa y manejar excepciones.</p>
+
+  <div class="slide-footer">
+    <span>GHCoin S.A.C. &times; Futuraria</span>
+    <span>05 / 06</span>
+  </div>
+</div>
+
+<!-- ====== SLIDE 6: LA DECISIÓN ====== -->
+<div class="slide cta-slide">
+  <div class="slide-num">06</div>
+  <div class="slide-label">Próximo Paso</div>
+  <div class="big-question">La decisión es <span class="gold">matemática</span>,<br>no de fe.</div>
+  <p style="font-size:1.1rem;color:var(--text-muted);margin-bottom:36px;max-width:650px;">Una reparación mayor evitada (S/12-15K) ya pagó el sistema. Todo lo demás es ganancia neta.</p>
+
+  <div class="cta-box">
+    <div class="main">Piloto: 2 semanas · 2 Hilux · Costo 0</div>
+    <div class="sub">Sin riesgo. Sin inversión inicial. Sin compromiso a largo plazo.</div>
+    <div class="sub" style="font-size:0.78rem;color:var(--text-dim);margin-top:8px;">Futuraria pone los dispositivos. GHCoin pone 2 vehículos y 2 conductores.</div>
+  </div>
+
+  <p style="margin-top:32px;font-size:0.85rem;color:var(--text-dim);">Contacto: Irwin Ganvini — Operaciones</p>
+
+  <div class="slide-footer">
+    <span>GHCoin S.A.C. &times; Futuraria</span>
+    <span>06 / 06</span>
+  </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</body>
+</html>
